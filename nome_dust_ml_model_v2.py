@@ -122,7 +122,7 @@ def load_nome_data(filepath: str, config: MLConfig = CONFIG) -> pd.DataFrame:
     print(f"  Raw rows: {len(df)}")
     
     # Parse dates with mixed format
-    df['date'] = pd.to_datetime(df['date'], errors='coerce')
+    df['date'] = pd.to_datetime(df['date'],format='mixed', errors='coerce')
     df = df.dropna(subset=['date'])
     print(f"  After date parsing: {len(df)}")
     
@@ -148,6 +148,10 @@ def load_nome_data(filepath: str, config: MLConfig = CONFIG) -> pd.DataFrame:
     # Drop rows without PM10
     df = df.dropna(subset=['PM10'])
     print(f"  After dropping missing PM10: {len(df)}")
+
+    # Removal of 12 outliers(PM10>1000)
+    df = df[df['PM10']<1000]
+    print(f" After outlier(PM10>1000) removal: {len(df)}")
     
     # Report date range
     print(f"  Date range: {df.index.min()} to {df.index.max()}")
