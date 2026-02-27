@@ -8,6 +8,102 @@
     <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* Changed overflow: hidden to allow scrolling on small mobiles if content is tall */
+        body { font-family: Arial, sans-serif; overflow-x: hidden; background: #f0f0f0; }
+        
+        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        
+        .panel { 
+            position: absolute; 
+            background: white; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15); 
+            z-index: 1000; 
+            padding: 12px; 
+        }
+
+        /* Desktop Positions */
+        .control-panel { top: 10px; left: 10px; width: 300px; }
+        .info-panel { top: 10px; right: 10px; width: 260px; }
+        .legend { bottom: 20px; right: 10px; width: 260px; font-size: 0.85em; }
+
+        /* Reuse your existing element styles... */
+        h3 { margin: 0 0 12px 0; font-size: 1em; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 6px; }
+        h4 { margin: 8px 0 6px 0; font-size: 0.9em; color: #555; font-weight: 600; border-top: 1px solid #e0e0e0; padding-top: 8px; }
+        h4:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+        .input-group { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 4px; font-size: 0.85em; font-weight: 600; }
+        select, input[type="range"] { width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.85em; }
+        .range-value { display: inline-block; min-width: 30px; font-weight: 600; color: #007bff; }
+        .btn { width: 100%; padding: 8px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 8px; font-size: 0.9em; }
+        .btn:hover { background: #545b62; }
+        
+        /* Info Panel Elements */
+        .info-section { margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid #eee; }
+        .info-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .info-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.85em; }
+        .info-row .label { color: #666; }
+        .info-row .value { font-weight: 600; color: #333; }
+        .risk-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.8em; }
+        .risk-badge.green { background: #e6f4ea; color: #1e7e34; }
+        .risk-badge.yellow { background: #fff3cd; color: #856404; }
+        .risk-badge.orange { background: #ffe0b2; color: #a85d00; }
+        .risk-badge.red { background: #f8d7da; color: #721c24; }
+        .pm-display { text-align: center; padding: 10px 0; }
+        .pm-value { font-size: 2.2em; font-weight: 700; }
+        
+
+        .toggle-group { display: flex; gap: 8px; margin-bottom: 12px; }
+        .toggle-btn { flex: 1; padding: 8px; background: #e9ecef; border: 1px solid #ced4da; border-radius: 4px; cursor: pointer; font-size: 0.85em; text-align: center; }
+        .toggle-btn.active { background: #28a745; color: white; border-color: #28a745; }
+        .checkbox-group { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 8px; background: #fff3cd; border-radius: 4px; border: 1px solid #ffc107; }
+
+        .legend-item { display: flex; align-items: center; margin-bottom: 6px; font-size: 0.82em; }
+        .legend-color { width: 30px; height: 15px; margin-right: 8px; border-radius: 3px; }
+        .legend-color.green { background: #00E400; }
+        .legend-color.yellow { background: #FFFF00; }
+        .legend-color.orange { background: #FF7E00; }
+        .legend-color.red { background: #FF0000; }
+        .legend-color.purple { background: #8F3F97; }
+        .legend-color.maroon { background: #7E0023; }
+
+        @media (max-width: 768px) {
+            body { overflow-y: auto; } /* Allow scrolling if panels stack */
+            
+            .panel {
+                position: relative; /* Remove absolute floating */
+                top: auto !important;
+                left: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+                width: 95% !important; /* Take up most of width */
+                margin: 10px auto; /* Center panels */
+                max-width: none;
+            }
+
+            #map {
+                position: fixed; /* Keep map in background while scrolling panels */
+                height: 100vh;
+            }
+
+            .control-panel { order: 1; }
+            .info-panel { order: 2; }
+            .legend { order: 3; margin-bottom: 20px; }
+
+            .toggle-btn, .btn {
+                padding: 12px;
+                font-size: 1em;
+            }
+        }
+        @media (max-width: 480px) {
+            .pm-value { font-size: 1.8em; }
+            h3 { font-size: 1.1em; }
+            .info-row { font-size: 0.9em; }
+        }
+    </style>
+
+    <!-- <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; overflow: hidden; }
         #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         .panel { position: absolute; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 1000; padding: 12px; }
@@ -74,7 +170,7 @@
         
         /* Small separator */
         .section-divider { height: 1px; background: #ddd; margin: 8px 0; }
-    </style>
+    </style> -->
 </head>
 <body>
     <div id="map"></div>
