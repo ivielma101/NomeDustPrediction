@@ -1,7 +1,12 @@
 
-const API_URL = 'http://localhost:8000/predict';
-const WEATHER_URL = 'http://localhost:8000/weather/Nome';
-const AQI_URL = 'http://localhost:8000/aqi/Nome';
+// const API_URL = 'http://localhost:8000/predict';
+// const WEATHER_URL = 'http://localhost:8000/weather/Nome';
+// const AQI_URL = 'http://localhost:8000/aqi/Nome';
+
+const API_URL = '/api/predict';
+const WEATHER_URL = '/api/weather/Nome';
+const AQI_URL = '/api/aqi/Nome';
+
 const NOWCAST_URL = 'http://localhost:8000/nowcast/latest';
 const MANUAL_OVERRIDE_URL = 'http://localhost:8000/predict/manual';
 const FORECAST_URL = 'http://localhost:8000/forecast/daily';
