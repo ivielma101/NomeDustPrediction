@@ -7,10 +7,13 @@ const API_URL = '/api/predict';
 const WEATHER_URL = '/api/weather/Nome';
 const AQI_URL = '/api/aqi/Nome';
 
-const NOWCAST_URL = 'http://localhost:8000/nowcast/latest';
-const MANUAL_OVERRIDE_URL = 'http://localhost:8000/predict/manual';
-const FORECAST_URL = 'http://localhost:8000/forecast/daily';
-const MAPTILER_KEY = "f5zBB8Hb9R2KXchIgAOK";
+// const NOWCAST_URL = 'http://localhost:8000/nowcast/latest';
+// const MANUAL_OVERRIDE_URL = 'http://localhost:8000/predict/manual';
+// const FORECAST_URL = 'http://localhost:8000/forecast/daily';
+// const MAPTILER_KEY = "f5zBB8Hb9R2KXchIgAOK";
+const NOWCAST_URL      = '/api/nowcast/latest'
+const MANUAL_OVERRIDE_URL = '/api/predict/manual'
+const FORECAST_URL     = '/api/forecast/daily'
 const CITY_CENTER = [-165.4064, 64.5011];
 
 const DUST_THRESHOLDS = {
