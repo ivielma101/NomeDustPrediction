@@ -357,8 +357,8 @@ Base Score: 0.000
 | Classifier AUC | 0.958 |
 | Classifier Precision | 80.9% |
 | Classifier Recall | 87.1% |
-| Regressor MAE | 27.3 µg/m³ |
-| 80% Coverage | 79.6% |
+| Regressor MAE | 21.42 µg/m³ |
+| 80% Coverage | 80.0% |
 
 ---
 
